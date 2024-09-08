@@ -29,14 +29,14 @@ char* SDL_GameControllerMappingForDeviceIndex(int joystick_index)
 gcc hacksdl.c -o hacksdl.so -fPIC -shared -lSDL2 -D_GNU_SOURCE
 ```
 
-Note: build it for the target arch (aarch64, armh7, ...)
+Note: build it for the target arch (aarch64, armhf, ...)
 
 ## Examples of usage
 
 Swap controller 0 and 1 with debug output
 ```
 export LD_PRELOAD="hacksdl.so"
-export HACKSDL_HINT_DEBUG=1
+export HACKSDL_DEBUG=1
 export HACKSDL_MAP_INDEX_0=1
 export HACKSDL_MAP_INDEX_1=0
 some_sdl2_prog
