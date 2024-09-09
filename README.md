@@ -6,22 +6,22 @@ This hack can swap the indexes of the controllers using `HACKSDL_MAP_INDEX_<n>` 
 
 Also this hack can give light debug info (with `HACKSDL_HINT_DEBUG` env variable) such as if one of the followin function has been called:
 
-int SDL_Init(Uint32 flags)
-int SDL_NumJoysticks(void)
-int SDL_JoystickGetDevicePlayerIndex(int device_index)
-SDL_JoystickGUID SDL_JoystickGetDeviceGUID(int device_index)
-SDL_Joystick* SDL_JoystickOpen(int device_index)
-const char* SDL_JoystickNameForIndex(int device_index)
-Uint16 SDL_JoystickGetDeviceVendor(int device_index)
-Uint16 SDL_JoystickGetDeviceProduct(int device_index)
-Uint16 SDL_JoystickGetDeviceProductVersion(int device_index)
-SDL_JoystickType SDL_JoystickGetDeviceType(int device_index)
-SDL_JoystickID SDL_JoystickGetDeviceInstanceID(int device_index)
-SDL_GameController* SDL_GameControllerOpen(int joystick_index)
-char* SDL_GameControllerMappingForIndex(int mapping_index)
-SDL_bool SDL_IsGameController(int joystick_index)
-const char* SDL_GameControllerNameForIndex(int joystick_index)
-char* SDL_GameControllerMappingForDeviceIndex(int joystick_index)
+- int SDL_Init(Uint32 flags)
+- int SDL_NumJoysticks(void)
+- int SDL_JoystickGetDevicePlayerIndex(int device_index)
+- SDL_JoystickGUID SDL_JoystickGetDeviceGUID(int device_index)
+- SDL_Joystick* SDL_JoystickOpen(int device_index)
+- const char* SDL_JoystickNameForIndex(int device_index)
+- Uint16 SDL_JoystickGetDeviceVendor(int device_index)
+- Uint16 SDL_JoystickGetDeviceProduct(int device_index)
+- Uint16 SDL_JoystickGetDeviceProductVersion(int device_index)
+- SDL_JoystickType SDL_JoystickGetDeviceType(int device_index)
+- SDL_JoystickID SDL_JoystickGetDeviceInstanceID(int device_index)
+- SDL_GameController* SDL_GameControllerOpen(int joystick_index)
+- char* SDL_GameControllerMappingForIndex(int mapping_index)
+- SDL_bool SDL_IsGameController(int joystick_index)
+- const char* SDL_GameControllerNameForIndex(int joystick_index)
+- char* SDL_GameControllerMappingForDeviceIndex(int joystick_index)
 
 ## Build
 
