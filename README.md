@@ -2,9 +2,9 @@
 
 An **experimental** SDL2 library hook hack. No safety controls are made, segfault can happen if you set crazy values. You have been warned ;)
 
-This hack can swap the indexes of the controllers using `HACKSDL_MAP_INDEX_<n>` env variable where `<n>` is the index you want to change. It allows you for example to use another controller in a game when the game only uses the main controller (index 0).
+This hack can swap the indexes of the controllers using `HACKSDL_MAP_INDEX_<n>` env variable where `<n>` is the index you want to change. It allows you for example to use another controller in a game when the game only uses the main controller (index 0). Maximum index is 15 (included).
 
-Also this hack can give light debug info (with `HACKSDL_HINT_DEBUG` env variable) such as if one of the followin function has been called:
+Also this hack can give light debug info (with `HACKSDL_HINT_DEBUG` env variable) such as if one of the following function has been called (non exhaustive, see source code for accurate informations):
 
 - int SDL_Init(Uint32 flags)
 - int SDL_NumJoysticks(void)
@@ -23,6 +23,10 @@ Also this hack can give light debug info (with `HACKSDL_HINT_DEBUG` env variable
 - const char* SDL_GameControllerNameForIndex(int joystick_index)
 - char* SDL_GameControllerMappingForDeviceIndex(int joystick_index)
 
+Additionnal hack are added such as:
+- disabling of controller
+- stick value modifier
+
 ## Build
 
 ```
@@ -33,8 +37,9 @@ Note: build it for the target arch (aarch64, armhf, ...)
 
 ## Examples of usage
 
-Swap controller 0 and 1 with debug output
-```
+**Swap controller 0 and 1 with debug output**
+
+```shell
 export LD_PRELOAD="hacksdl.so"
 export HACKSDL_DEBUG=1
 export HACKSDL_MAP_INDEX_0=1
@@ -42,7 +47,21 @@ export HACKSDL_MAP_INDEX_1=0
 some_sdl2_prog
 ```
 
-Swap controller 0 and 2, one line command
+**Enable button X as modifier, dividing by 4 (2^2) the value read for a stick axis**
+
+```shell
+export LD_PRELOAD="hacksdl.so"
+export HACKSDL_MODIFIER_BUTTON=X
+export HACKSDL_MODIFIER_SHIFT=2
+```
+
+**Disable gamepad controller**
+```shell
+export LD_PRELOAD="hacksdl.so"
+export HACKSDL_NO_GAMECONTROLLER=1
+```
+
+**Swap controller 0 and 2, one line command**
 
 ```
 LD_PRELOAD="hacksdl.so" HACKSDL_MAP_INDEX_0=2 HACKSDL_MAP_INDEX_2=0 some_sdl2_prog
