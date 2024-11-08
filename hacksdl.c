@@ -161,21 +161,24 @@ void initialize()
     // modifier hack
     const char *modifier_shift_hint = SDL_GetHint(HACKSDL_HINT_MODIFIER_SHIFT);
 
-    errno = 0;
-    modifier_shift = (int)strtol(modifier_shift_hint,NULL,10);
-    if (modifier_shift < 0 || errno != 0){
-        HACKSDL_debug("incorrect HACKSDL_MODIFIER_SHIFT: %s", modifier_shift_hint);
-        modifier_shift = 0;
-    }
-    
-    if (modifier_shift > 0)
+    if(modifier_shift_hint != NULL)
     {
-        HACKSDL_debug("HACKSDL_MODIFIER_SHIFT = %d", modifier_shift);
-        modifier_button = get_gc_button(SDL_GetHint(HACKSDL_HINT_MODIFIER_BUTTON));
-    }
-    else
-    {
-        HACKSDL_debug("HACKSDL_MODIFIER_SHIFT disabled");
+        errno = 0;
+        modifier_shift = (int)strtol(modifier_shift_hint,NULL,10);
+        if (modifier_shift < 0 || errno != 0){
+            HACKSDL_debug("incorrect HACKSDL_MODIFIER_SHIFT: %s", modifier_shift_hint);
+            modifier_shift = 0;
+        }
+        
+        if (modifier_shift > 0)
+        {
+            HACKSDL_debug("HACKSDL_MODIFIER_SHIFT = %d", modifier_shift);
+            modifier_button = get_gc_button(SDL_GetHint(HACKSDL_HINT_MODIFIER_BUTTON));
+        }
+        else
+        {
+            HACKSDL_debug("HACKSDL_MODIFIER_SHIFT disabled");
+        }
     }
 
     HACKSDL_debug("Initialization done");
@@ -222,33 +225,6 @@ char* get_axis_name(SDL_GameControllerAxis axis)
 int HACKSDL_map_index(int index)
 {
     return index_mapping[index];
-}
-
-int HACKSDL_map_index_old(int index)
-{
-
-    char buffer[32];
-    int new_index;
-    
-    sprintf(buffer,HACKSDL_HINT_MAP_INDEX_,index);
-
-    const char *hint = SDL_GetHint(buffer);
-    if (hint != NULL){
-        errno = 0;
-        new_index = (int)strtol(hint,NULL,10);
-
-        if (errno != 0){
-            HACKSDL_debug("incorrect mapping: %s", hint);
-            new_index = index;
-        }else{
-            HACKSDL_debug("map index %d to %d", index, new_index);
-        }
-    }else{
-        HACKSDL_debug("no mapping set for index %d", index);
-        new_index = index;
-    }
-    
-    return new_index;
 }
 
 int SDL_Init(Uint32 flags)
