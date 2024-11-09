@@ -27,10 +27,17 @@ Additionnal hack are added such as:
 - disabling of controller
 - stick value modifier
 
+## Build requirements
+
+```shell
+apt install build-essential
+apt install libsdl2-dev libconfig-dev
+```
+
 ## Build
 
-```
-gcc hacksdl.c -o hacksdl.so -fPIC -shared -lSDL2 -D_GNU_SOURCE
+```shell
+gcc hacksdl.c  /usr/lib/aarch64-linux-gnu/libconfig.a -o hacksdl.aarch64.so -fPIC -shared -lSDL2 -D_GNU_SOURCE
 ```
 
 Note: build it for the target arch (aarch64, armhf, ...)
@@ -40,29 +47,52 @@ Note: build it for the target arch (aarch64, armhf, ...)
 **Swap controller 0 and 1 with debug output**
 
 ```shell
-export LD_PRELOAD="hacksdl.so"
+export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
 export HACKSDL_DEBUG=1
 export HACKSDL_MAP_INDEX_0=1
 export HACKSDL_MAP_INDEX_1=0
-some_sdl2_prog
+./some_sdl2_prog
 ```
 
-**Enable button X as modifier, dividing by 4 (2^2) the value read for a stick axis**
+**Enable button X as modifier, dividing by 4 (2^2) the value read for a stick axis 0**
 
 ```shell
-export LD_PRELOAD="hacksdl.so"
+export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
 export HACKSDL_MODIFIER_BUTTON=X
-export HACKSDL_MODIFIER_SHIFT=2
+export HACKSDL_MODIFIER_SHIFT_0=2
+./some_sdl2_prog
 ```
 
 **Disable gamepad controller**
 ```shell
-export LD_PRELOAD="hacksdl.so"
+export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
 export HACKSDL_NO_GAMECONTROLLER=1
+./some_sdl2_prog
 ```
 
 **Swap controller 0 and 2, one line command**
 
+```shell
+LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_MAP_INDEX_0=2 HACKSDL_MAP_INDEX_2=0 ./some_sdl2_prog
 ```
-LD_PRELOAD="hacksdl.so" HACKSDL_MAP_INDEX_0=2 HACKSDL_MAP_INDEX_2=0 some_sdl2_prog
+
+**Use configuration file**
+
+```shell
+export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
+export HACKSDL_DEBUG=1
+export HACKSDL_CONFIG_FILE="$PWD/hacksdl.conf"
+./some_sdl2_prog
+```
+
+- hacksdl.conf
+```conf
+HACKSDL_DEBUG="1";
+HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
+HACKSDL_AXIS_THRESHOLD_4="2048";
+HACKSDL_AXIS_THRESHOLD_5="2048";
+HACKSDL_AXIS_MIN_5="0";
+HACKSDL_AXIS_MAX_5="20000";
+HACKSDL_MODIFIER_BUTTON=X
+HACKSDL_MODIFIER_SHIFT_0=2
 ```
