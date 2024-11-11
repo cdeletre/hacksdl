@@ -25,6 +25,7 @@ Also this hack can give light debug info (with `HACKSDL_HINT_DEBUG` env variable
 
 Additionnal hack are added such as:
 - disabling of controller
+- axis digital mode
 - stick value modifier
 
 ## Build requirements
@@ -37,7 +38,7 @@ apt install libsdl2-dev libconfig-dev
 ## Build
 
 ```shell
-gcc hacksdl.c  /usr/lib/aarch64-linux-gnu/libconfig.a -o hacksdl.aarch64.so -fPIC -shared -lSDL2 -D_GNU_SOURCE
+gcc hacksdl.c configuration.c debug.c /usr/lib/aarch64-linux-gnu/libconfig.a -o hacksdl.aarch64.so -fPIC -shared -lSDL2 -D_GNU_SOURCE
 ```
 
 Note: build it for the target arch (aarch64, armhf, ...)
@@ -48,7 +49,7 @@ Note: build it for the target arch (aarch64, armhf, ...)
 
 ```shell
 export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
-export HACKSDL_DEBUG=1
+export HACKSDL_VERBOSE=2
 export HACKSDL_MAP_INDEX_0=1
 export HACKSDL_MAP_INDEX_1=0
 ./some_sdl2_prog
@@ -80,17 +81,18 @@ LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_MAP_INDEX_0=2 HACKSDL_MAP_INDEX_2=0
 
 ```shell
 export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
-export HACKSDL_DEBUG=1
+export HACKSDL_VERBOSE=1
 export HACKSDL_CONFIG_FILE="$PWD/hacksdl.conf"
 ./some_sdl2_prog
 ```
 
-- hacksdl.conf
+- hacksdl.conf (example)
 ```conf
-HACKSDL_DEBUG="1";
+HACKSDL_VERBOSE="1";
 HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
-HACKSDL_AXIS_THRESHOLD_4="2048";
-HACKSDL_AXIS_THRESHOLD_5="2048";
+HACKSDL_AXIS_DIGITAL_4="1";
+HACKSDL_AXIS_DIGITAL_5="1";
+HACKSDL_AXIS_THRESHOLD_5="4096";
 HACKSDL_AXIS_MIN_5="0";
 HACKSDL_AXIS_MAX_5="20000";
 HACKSDL_MODIFIER_BUTTON=X
