@@ -419,7 +419,7 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
             {
                 axis_value = SDL_AXIS_MIN;
             }
-            else
+            else if(axis_value > 0)
             {
                 axis_value = SDL_AXIS_MAX;
             }
