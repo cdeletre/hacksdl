@@ -26,7 +26,8 @@ Also this hack can give light debug info (with `HACKSDL_HINT_DEBUG` env variable
 Additionnal hack are added such as:
 - disabling of controller
 - axis digital mode
-- stick value modifier
+- axis deadzone
+- axis value modifier
 
 ## Build requirements
 
@@ -90,11 +91,10 @@ export HACKSDL_CONFIG_FILE="$PWD/hacksdl.conf"
 ```conf
 HACKSDL_VERBOSE="1";
 HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
-HACKSDL_AXIS_DIGITAL_4="1";
-HACKSDL_AXIS_DIGITAL_5="1";
-HACKSDL_AXIS_THRESHOLD_5="4096";
-HACKSDL_AXIS_MIN_5="0";
-HACKSDL_AXIS_MAX_5="20000";
+HACKSDL_AXIS_DEADZONE_4="2048";
+HACKSDL_AXIS_DEADZONE_5="2048";
+HACKSDL_AXIS_MODE_4="0";
+HACKSDL_AXIS_MODE_5="0";
 HACKSDL_MODIFIER_BUTTON="X";
 HACKSDL_MODIFIER_SHIFT_0="2";
 ```

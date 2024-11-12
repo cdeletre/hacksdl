@@ -330,8 +330,6 @@ char* SDL_GameControllerMappingForIndex(int mapping_index)
 SDL_bool SDL_IsGameController(int joystick_index)
 {
 
-    SDL_GameControllerAddMappingsFromFile("/tmp/gamecontrollerdb.txt");
-
     if(config.no_gamecontroller){
         HACKSDL_debug("Hook + hack: return false for joystick_index=%d", joystick_index);
         return SDL_FALSE;
@@ -402,20 +400,32 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
         if (button_pressed == 1)
         {
             axis_value = axis_value >> config.modifier_shift[axis];
-            HACKSDL_debug("Modifier enabled new value=%d (Sint16)", axis_value);
+            HACKSDL_debug("Modifier enabled new value=%d", axis_value);
         }
     }
     
-    if(config.axis_digital[axis] == 1)
+    if(config.axis_deadzone[axis] > 0)
     {
-        if(axis_value > config.axis_threshold[axis]){
-            axis_value = config.axis_max[axis];
-        }
-        else
+        if(axis_value < config.axis_deadzone[axis])
         {
-            axis_value = config.axis_min[axis];
+            // deadzone
+            axis_value = 0;
+            HACKSDL_debug("Deadzone new value=%d", axis_value);
         }
-        HACKSDL_debug("Digital enabled new value=%d", axis_value);
+        else if(config.axis_mode[axis] = 1)
+        {
+            // digital mode
+            if(axis_value < 0)
+            {
+                axis_value = SDL_AXIS_MIN;
+            }
+            else
+            {
+                axis_value = SDL_AXIS_MAX;
+            }
+            HACKSDL_debug("Digital mode new value=%d", axis_value);
+        }
+
     }
 
     return axis_value;

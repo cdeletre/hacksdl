@@ -22,10 +22,9 @@ void default_config()
     for(int axis=0;axis < HACKSDL_AXIS_INDEX_MAX; axis++)
     {
         config.modifier_shift[axis] = 0;
-        config.axis_digital[axis] = 0;
-        config.axis_threshold[axis] = HACKSDL_AXIS_DEFAULT_THRESHOLD;
-        config.axis_min[axis] = HACKSDL_AXIS_DEFAULT_MIN;
-        config.axis_max[axis] = HACKSDL_AXIS_DEFAULT_MAX;
+        config.axis_mode[axis] = 0;
+        config.axis_deadzone[axis] = HACKSDL_AXIS_DEFAULT_DEADZONE;
+
     }
 
     for(int index=0;index < HACKSDL_MAP_INDEX_MAX; index++)
@@ -49,10 +48,7 @@ void print_config()
         {
             HACKSDL_info("axis=%d modifier_shift=%d", axis, config.modifier_shift[axis]);
         }
-        if(config.axis_digital[axis])
-        {
-            HACKSDL_info("axis=%d threshold=%d min=%d max=%d", axis, config.axis_threshold[axis], config.axis_min[axis], config.axis_max[axis]);
-        }
+        HACKSDL_info("axis=%d mode=%d deadzone=%d", axis, config.axis_mode[axis], config.axis_deadzone[axis]);
     }
 
     for(int index=0;index < HACKSDL_MAP_INDEX_MAX; index++)
@@ -157,12 +153,9 @@ int load_config_data()
         HACKSDL_debug("HACKSDL_MODIFIER_BUTTON not set");
     }
 
-    // trigger hack (HACKSDL_AXIS_THRESHOLD, HACKSDL_AXIS_MIN, HACKSDL_AXIS_MAX)
-    read_config_int_map(HACKSDL_HINT_AXIS_DIGITAL_, &config.axis_digital[0], HACKSDL_AXIS_INDEX_MAX);
-    read_config_int_map(HACKSDL_HINT_AXIS_THRESHOLD_, &config.axis_threshold[0], HACKSDL_AXIS_INDEX_MAX);
-    read_config_int_map(HACKSDL_HINT_AXIS_MIN_, &config.axis_min[0], HACKSDL_AXIS_INDEX_MAX);
-    read_config_int_map(HACKSDL_HINT_AXIS_MAX_, &config.axis_max[0], HACKSDL_AXIS_INDEX_MAX);
-
+    // trigger hack (HACKSDL_AXIS_MODE/DEADZONE)
+    read_config_int_map(HACKSDL_HINT_AXIS_MODE_, &config.axis_mode[0], HACKSDL_AXIS_INDEX_MAX);
+    read_config_int_map(HACKSDL_HINT_AXIS_DEADZONE_, &config.axis_deadzone[0], HACKSDL_AXIS_INDEX_MAX);
 }
 
 /*

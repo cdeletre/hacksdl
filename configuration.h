@@ -2,14 +2,12 @@
 
 
 #define SDL_AXIS_MAX                            32767
-#define SDL_AXIS_MIN                            -37768
+#define SDL_AXIS_MIN                            -32768
 
 #define HACKSDL_LIBSDL_NAME_LMAX                32
 #define HACKSDL_MAP_INDEX_MAX                   16
 #define HACKSDL_AXIS_INDEX_MAX                  8
-#define HACKSDL_AXIS_DEFAULT_MAX                SDL_AXIS_MAX
-#define HACKSDL_AXIS_DEFAULT_MIN                0
-#define HACKSDL_AXIS_DEFAULT_THRESHOLD          16384
+#define HACKSDL_AXIS_DEFAULT_DEADZONE           -1
 
 
 #define HACKSDL_HINT_LIBSDL_NAME                "HACKSDL_LIBSDL_NAME"
@@ -19,10 +17,8 @@
 #define HACKSDL_HINT_NO_GAMECONTROLLER          "HACKSDL_NO_GAMECONTROLLER"
 #define HACKSDL_HINT_MODIFIER_BUTTON            "HACKSDL_MODIFIER_BUTTON"
 #define HACKSDL_HINT_MODIFIER_SHIFT_            "HACKSDL_MODIFIER_SHIFT_%d"
-#define HACKSDL_HINT_AXIS_DIGITAL_              "HACKSDL_AXIS_DIGITAL_%d"
-#define HACKSDL_HINT_AXIS_THRESHOLD_            "HACKSDL_AXIS_THRESHOLD_%d"
-#define HACKSDL_HINT_AXIS_MIN_                  "HACKSDL_AXIS_MIN_%d"
-#define HACKSDL_HINT_AXIS_MAX_                  "HACKSDL_AXIS_INDEX_MAX_%d"
+#define HACKSDL_HINT_AXIS_MODE_                 "HACKSDL_AXIS_MODE_%d"
+#define HACKSDL_HINT_AXIS_DEADZONE_             "HACKSDL_AXIS_DEADZONE_%d"
 
 struct hacksdl_config{
     int verbose;
@@ -31,10 +27,8 @@ struct hacksdl_config{
     SDL_GameControllerButton modifier_button;
     int modifier_shift[HACKSDL_AXIS_INDEX_MAX];
     int index_mapping[HACKSDL_MAP_INDEX_MAX];
-    int axis_digital[HACKSDL_AXIS_INDEX_MAX];
-    int axis_threshold[HACKSDL_AXIS_INDEX_MAX];
-    int axis_min[HACKSDL_AXIS_INDEX_MAX];
-    int axis_max[HACKSDL_AXIS_INDEX_MAX];
+    int axis_mode[HACKSDL_AXIS_INDEX_MAX];
+    int axis_deadzone[HACKSDL_AXIS_INDEX_MAX];
 };
 
 typedef struct hacksdl_config hacksdl_config_t;
