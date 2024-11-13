@@ -361,13 +361,8 @@ int read_config_env_int_map(char* str, int *value_map, int length)
 
         if(read_config_env_int(buffer, &int_value))
         {
-            *value_map = int_value;
+            value_map[index] = int_value;
         }
-        else
-        {
-            *value_map = index;
-        }
-        value_map++;
     }
 }
 
