@@ -24,7 +24,7 @@ Also this hack can give light debug info (with `HACKSDL_HINT_DEBUG` env variable
 - char* SDL_GameControllerMappingForDeviceIndex(int joystick_index)
 
 Additionnal hack are added such as:
-- disabling of controller
+- disabling of controller (by index or all)
 - axis digital mode
 - axis deadzone
 - axis value modifier
@@ -65,7 +65,7 @@ export HACKSDL_MODIFIER_SHIFT_0=2
 ./some_sdl2_prog
 ```
 
-**Disable gamepad controller**
+**Disable all gamepad controller**
 ```shell
 export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
 export HACKSDL_NO_GAMECONTROLLER=1
@@ -76,6 +76,12 @@ export HACKSDL_NO_GAMECONTROLLER=1
 
 ```shell
 LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_MAP_INDEX_0=2 HACKSDL_MAP_INDEX_2=0 ./some_sdl2_prog
+```
+
+**Disable controller with index 0, one line command**
+
+```shell
+LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DISABLE_DEVICE_0=1 ./some_sdl2_prog
 ```
 
 **Use configuration file**

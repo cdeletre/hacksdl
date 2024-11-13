@@ -5,7 +5,7 @@
 #define SDL_AXIS_MIN                            -32768
 
 #define HACKSDL_LIBSDL_NAME_LMAX                32
-#define HACKSDL_MAP_INDEX_MAX                   16
+#define HACKSDL_DEVICE_INDEX_MAX                   16
 #define HACKSDL_AXIS_INDEX_MAX                  8
 #define HACKSDL_AXIS_DEFAULT_DEADZONE           -1
 
@@ -13,6 +13,7 @@
 #define HACKSDL_HINT_LIBSDL_NAME                "HACKSDL_LIBSDL_NAME"
 #define HACKSDL_HINT_CONFIG_FILE                "HACKSDL_CONFIG_FILE"
 #define HACKSDL_HINT_MAP_INDEX_                 "HACKSDL_MAP_INDEX_%d"
+#define HACKSDL_HINT_DISABLE_DEVICE_            "HACKSDL_DISABLE_DEVICE_%d"
 #define HACKSDL_HINT_VERBOSE                    "HACKSDL_VERBOSE"
 #define HACKSDL_HINT_NO_GAMECONTROLLER          "HACKSDL_NO_GAMECONTROLLER"
 #define HACKSDL_HINT_MODIFIER_BUTTON            "HACKSDL_MODIFIER_BUTTON"
@@ -25,8 +26,9 @@ struct hacksdl_config{
     char libsdl_name[HACKSDL_LIBSDL_NAME_LMAX];
     int no_gamecontroller;
     SDL_GameControllerButton modifier_button;
+    int disable_device[HACKSDL_DEVICE_INDEX_MAX];
     int modifier_shift[HACKSDL_AXIS_INDEX_MAX];
-    int index_mapping[HACKSDL_MAP_INDEX_MAX];
+    int index_mapping[HACKSDL_DEVICE_INDEX_MAX];
     int axis_mode[HACKSDL_AXIS_INDEX_MAX];
     int axis_deadzone[HACKSDL_AXIS_INDEX_MAX];
 };

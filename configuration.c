@@ -27,8 +27,9 @@ void default_config()
 
     }
 
-    for(int index=0;index < HACKSDL_MAP_INDEX_MAX; index++)
-    { 
+    for(int index=0;index < HACKSDL_DEVICE_INDEX_MAX; index++)
+    {
+        config.disable_device[index] = 0;
         config.index_mapping[index] = index;
     }
 }
@@ -51,12 +52,13 @@ void print_config()
         HACKSDL_info("axis=%d mode=%d deadzone=%d", axis, config.axis_mode[axis], config.axis_deadzone[axis]);
     }
 
-    for(int index=0;index < HACKSDL_MAP_INDEX_MAX; index++)
+    for(int index=0;index < HACKSDL_DEVICE_INDEX_MAX; index++)
     {
         if(config.index_mapping[index] != index)
         {
             HACKSDL_info("index_mapping[%d]=%d",index, config.index_mapping[index]);
         }
+        HACKSDL_info("disable_device[%d]=%d",index, config.disable_device[index]);
     }
     HACKSDL_info("---- Configuration END ----");
 }
@@ -136,7 +138,10 @@ int load_config_data()
     }
 
     // remap hack (HACKSDL_MAP_INDEX_)
-    read_config_int_map(HACKSDL_HINT_MAP_INDEX_, &config.index_mapping[0], HACKSDL_MAP_INDEX_MAX);
+    read_config_int_map(HACKSDL_HINT_MAP_INDEX_, &config.index_mapping[0], HACKSDL_DEVICE_INDEX_MAX);
+
+    // disable device
+    read_config_int_map(HACKSDL_HINT_DISABLE_DEVICE_, &config.disable_device[0], HACKSDL_DEVICE_INDEX_MAX);
 
     // no controller hack (HACKSDL_NO_GAMECONTROLLER)
     read_config_int(HACKSDL_HINT_NO_GAMECONTROLLER, &config.no_gamecontroller);

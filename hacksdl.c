@@ -160,7 +160,7 @@ int SDL_Init(Uint32 flags)
 
 int SDL_NumJoysticks(void)
 {
-    if(config.no_gamecontroller == 1)
+    if(config.no_gamecontroller)
     {       
         HACKSDL_debug("Hook + hack: return 0");
         return 0;
@@ -330,7 +330,7 @@ char* SDL_GameControllerMappingForIndex(int mapping_index)
 SDL_bool SDL_IsGameController(int joystick_index)
 {
 
-    if(config.no_gamecontroller){
+    if(config.no_gamecontroller || config.disable_device[joystick_index]){
         HACKSDL_debug("Hook + hack: return false for joystick_index=%d", joystick_index);
         return SDL_FALSE;
     }else{
