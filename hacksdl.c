@@ -98,46 +98,6 @@ int initialize()
 }
 
 /*
-    get_axis_name: Get the SDL axis name (char*)
-*/
-char* get_axis_name(SDL_GameControllerAxis axis)
-{
-
-    char* axis_name;
-    switch (axis)
-    {
-    case SDL_CONTROLLER_AXIS_INVALID:
-        axis_name = "SDL_CONTROLLER_AXIS_INVALID";
-        break;
-    case SDL_CONTROLLER_AXIS_LEFTX:
-        axis_name = "SDL_CONTROLLER_AXIS_LEFTX";
-        break;
-    case SDL_CONTROLLER_AXIS_LEFTY:
-        axis_name = "SDL_CONTROLLER_AXIS_LEFTY";
-        break;
-    case SDL_CONTROLLER_AXIS_RIGHTX:
-        axis_name = "SDL_CONTROLLER_AXIS_RIGHTX";
-        break;
-    case SDL_CONTROLLER_AXIS_RIGHTY:
-        axis_name = "SDL_CONTROLLER_AXIS_RIGHTY";
-        break;
-    case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
-        axis_name = "SDL_CONTROLLER_AXIS_TRIGGERLEFT";
-        break;
-    case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
-        axis_name = "SDL_CONTROLLER_AXIS_TRIGGERRIGHT";
-        break;
-    case SDL_CONTROLLER_AXIS_MAX:
-        axis_name = "SDL_CONTROLLER_AXIS_MAX";
-        break;
-    default:
-        axis_name = "UNKNOWN";
-        break;
-    }
-
-    return axis_name;
-}
-/*
     HACKSDL_map_index: return the hacked index for a device
 */
 int HACKSDL_map_index(int index)
@@ -412,7 +372,7 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
             axis_value = 0;
             HACKSDL_debug("Deadzone new value=%d", axis_value);
         }
-        else if(config.axis_mode[axis] = 1)
+        else if(config.axis_digital[axis] = 1)
         {
             // digital mode
             if(axis_value < 0)

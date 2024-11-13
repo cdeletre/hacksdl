@@ -4,7 +4,7 @@ An **experimental** SDL2 library hook hack. No safety controls are made, segfaul
 
 This hack can swap the indexes of the controllers using `HACKSDL_MAP_INDEX_<n>` env variable where `<n>` is the index you want to change. It allows you for example to use another controller in a game when the game only uses the main controller (index 0). Maximum index is 15 (included).
 
-Also this hack can give light debug info (with `HACKSDL_HINT_DEBUG` env variable) such as if one of the following function has been called (non exhaustive, see source code for accurate informations):
+Also this hack can give light debug info (with `HACKSDL_VERBOSE` env variable) such as if one of the following function has been called (non exhaustive, see source code for accurate informations):
 
 - int SDL_Init(Uint32 flags)
 - int SDL_NumJoysticks(void)
@@ -56,12 +56,12 @@ export HACKSDL_MAP_INDEX_1=0
 ./some_sdl2_prog
 ```
 
-**Enable button X as modifier, dividing by 4 (2^2) the value read for a stick axis 0**
+**Enable button X as modifier, dividing by 4 (2^2) the value read for a stick axis LEFTX**
 
 ```shell
 export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
 export HACKSDL_MODIFIER_BUTTON=X
-export HACKSDL_MODIFIER_SHIFT_0=2
+export HACKSDL_MODIFIER_SHIFT_LEFTX=2
 ./some_sdl2_prog
 ```
 
@@ -97,10 +97,11 @@ export HACKSDL_CONFIG_FILE="$PWD/hacksdl.conf"
 ```conf
 HACKSDL_VERBOSE="1";
 HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
-HACKSDL_AXIS_DEADZONE_4="2048";
-HACKSDL_AXIS_DEADZONE_5="2048";
-HACKSDL_AXIS_MODE_4="0";
-HACKSDL_AXIS_MODE_5="0";
+HACKSDL_AXIS_DEADZONE_LEFTX="2048";
+HACKSDL_AXIS_DEADZONE_LEFTX="2048";
+HACKSDL_AXIS_DIGITAL_LEFTX="1";
+HACKSDL_AXIS_DIGITAL_LEFTY="1";
 HACKSDL_MODIFIER_BUTTON="X";
-HACKSDL_MODIFIER_SHIFT_0="2";
+HACKSDL_MODIFIER_SHIFT_LEFTX="2";
+HACKSDL_MODIFIER_SHIFT_LEFTY="2";
 ```
