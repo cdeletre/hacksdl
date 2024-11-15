@@ -164,6 +164,12 @@ SDL_JoystickGUID SDL_JoystickGetDeviceGUID(int device_index)
 SDL_Joystick* SDL_JoystickOpen(int device_index)
 {
 
+    if(config.no_gamecontroller == 2 || config.disable_device[device_index] == 2)
+    {
+        HACKSDL_debug("Hook + hack: return NULL for device_index=%d", device_index);
+        return NULL;
+    }
+
     if(HACKSDL_map_index(device_index) != device_index){
         HACKSDL_debug("Hook + hack: device_index %d -> %d)", device_index, HACKSDL_map_index(device_index));
     }
@@ -261,6 +267,11 @@ SDL_JoystickID SDL_JoystickGetDeviceInstanceID(int device_index)
 
 SDL_GameController* SDL_GameControllerOpen(int joystick_index)
 {    
+    if(config.no_gamecontroller == 2 || config.disable_device[joystick_index] == 2)
+    {
+        HACKSDL_debug("Hook + hack: return NULL for joystick_index=%d", joystick_index);
+        return NULL;
+    }
 
     if(HACKSDL_map_index(joystick_index) != joystick_index){
         HACKSDL_debug("Hook + hack: joystick_index %d -> %d)", joystick_index, HACKSDL_map_index(joystick_index));

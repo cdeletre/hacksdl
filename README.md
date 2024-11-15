@@ -78,11 +78,21 @@ export HACKSDL_NO_GAMECONTROLLER=1
 LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_MAP_INDEX_0=2 HACKSDL_MAP_INDEX_2=0 ./some_sdl2_prog
 ```
 
-**Disable controller with index 0, one line command**
+**Disable (mode 1) controller with index 0, one line command**
 
 ```shell
 LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DISABLE_DEVICE_0=1 ./some_sdl2_prog
 ```
+
+*mode 1 forces SDL_IsGameController to return False for a disable device*
+
+**Disable (mode 2) controller with index 0, one line command**
+
+```shell
+LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DISABLE_DEVICE_0=2 ./some_sdl2_prog
+```
+
+*mode 2 does the same as mode 1 but also forces SDL_GameControllerOpen to return NULL for a disable device*
 
 **Use configuration file**
 
