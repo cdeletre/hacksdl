@@ -37,6 +37,8 @@ char* (*original_SDL_GameControllerMappingForDeviceIndex)(int joystick_index);
 
 // Value reading functions
 Sint16 (*original_SDL_GameControllerGetAxis)(SDL_GameController *gamecontroller, SDL_GameControllerAxis axis);
+Uint8 (*original_SDL_GameControllerGetButton)(SDL_GameController *gamecontroller, SDL_GameControllerButton button);
+SDL_bool (*original_SDL_GameControllerHasAxis)(SDL_GameController *gamecontroller, SDL_GameControllerAxis axis);
 
 /*
     Dynamic Library open for original SDL functions
@@ -70,7 +72,8 @@ int setup_original_SDL_functions(){
     original_SDL_GameControllerMappingForDeviceIndex = dlsym(sdl_handler, "SDL_GameControllerMappingForDeviceIndex");
 
     original_SDL_GameControllerGetAxis = dlsym(sdl_handler, "SDL_GameControllerGetAxis");
-
+    original_SDL_GameControllerGetButton = dlsym(sdl_handler, "SDL_GameControllerGetButton");
+    original_SDL_GameControllerHasAxis = dlsym(sdl_handler, "SDL_GameControllerHasAxis");
 }
 
 
@@ -102,7 +105,7 @@ int initialize()
 */
 int HACKSDL_map_index(int index)
 {
-    return config.index_mapping[index];
+    return config.controller_index_mapping[index];
 }
 
 /*
@@ -164,7 +167,7 @@ SDL_JoystickGUID SDL_JoystickGetDeviceGUID(int device_index)
 SDL_Joystick* SDL_JoystickOpen(int device_index)
 {
 
-    if(config.no_gamecontroller == 2 || config.disable_device[device_index] == 2)
+    if(config.no_gamecontroller == 2 || config.device_disable[device_index] == 2)
     {
         HACKSDL_debug("Hook + hack: return NULL for device_index=%d", device_index);
         return NULL;
@@ -267,7 +270,7 @@ SDL_JoystickID SDL_JoystickGetDeviceInstanceID(int device_index)
 
 SDL_GameController* SDL_GameControllerOpen(int joystick_index)
 {    
-    if(config.no_gamecontroller == 2 || config.disable_device[joystick_index] == 2)
+    if(config.no_gamecontroller == 2 || config.device_disable[joystick_index] == 2)
     {
         HACKSDL_debug("Hook + hack: return NULL for joystick_index=%d", joystick_index);
         return NULL;
@@ -301,7 +304,7 @@ char* SDL_GameControllerMappingForIndex(int mapping_index)
 SDL_bool SDL_IsGameController(int joystick_index)
 {
 
-    if(config.no_gamecontroller || config.disable_device[joystick_index]){
+    if(config.no_gamecontroller || config.device_disable[joystick_index]){
         HACKSDL_debug("Hook + hack: return false for joystick_index=%d", joystick_index);
         return SDL_FALSE;
     }else{
@@ -359,19 +362,39 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
 
     Sint16 axis_value = 0;
     Uint8 button_pressed = 0;
+    int axis_minus_virtual_button_value = 0;
+    int axis_plus_virtual_button_value = 0;
 
     axis_value = original_SDL_GameControllerGetAxis(gamecontroller, axis);
 
-    HACKSDL_debug("Hook gamecontroller=%s axis=%s value=%d", SDL_GameControllerName(gamecontroller), get_axis_name(axis), axis_value);
+    HACKSDL_debug("Hook gamecontroller=%s axis=%s value=%d", SDL_GameControllerName(gamecontroller), SDL_GameControllerGetStringForAxis(axis), axis_value);
 
-    if(config.modifier_shift[axis] != 0)
+    if ( (config.axis_minus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) || (config.axis_plus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) )
     {
-        button_pressed = SDL_GameControllerGetButton(gamecontroller, config.modifier_button);
+        axis_minus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_minus_virtual_map[axis]);
+        axis_plus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_plus_virtual_map[axis]);
+        
+        if(axis_minus_virtual_button_value && (! axis_plus_virtual_button_value))
+        {
+            axis_value = SDL_AXIS_MIN;
+        }else if((! axis_minus_virtual_button_value) && axis_plus_virtual_button_value)
+        {
+            axis_value = SDL_AXIS_MAX;
+        }else{
+            axis_value = 0;
+        }
+        HACKSDL_debug("Virtual axis enabled, new value=%d", axis_value);
+    }
+
+
+    if(config.axis_modifier_shift[axis] != 0)
+    {
+        button_pressed = original_SDL_GameControllerGetButton(gamecontroller, config.modifier_button);
 
         if (button_pressed == 1)
         {
-            axis_value = axis_value >> config.modifier_shift[axis];
-            HACKSDL_debug("Modifier enabled new value=%d", axis_value);
+            axis_value = axis_value >> config.axis_modifier_shift[axis];
+            HACKSDL_debug("Modifier enabled, new value=%d", axis_value);
         }
     }
     
@@ -381,7 +404,7 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
         {
             // deadzone
             axis_value = 0;
-            HACKSDL_debug("Deadzone new value=%d", axis_value);
+            HACKSDL_debug("Deadzone enabled, new value=%d", axis_value);
         }
         else if(config.axis_digital[axis] = 1)
         {
@@ -394,11 +417,47 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
             {
                 axis_value = SDL_AXIS_MAX;
             }
-            HACKSDL_debug("Digital mode new value=%d", axis_value);
+            HACKSDL_debug("Digital mode, new value=%d", axis_value);
         }
 
     }
 
     return axis_value;
+
+}
+
+Uint8 SDL_GameControllerGetButton(SDL_GameController *gamecontroller, SDL_GameControllerButton button)
+{
+    Uint8 button_pressed = 0;
+
+    button_pressed = original_SDL_GameControllerGetButton(gamecontroller, button);
+
+    HACKSDL_debug("Hook gamecontroller=%s button=%s value=%d", SDL_GameControllerName(gamecontroller), SDL_GameControllerGetStringForButton(button), button_pressed);
+
+    if(config.button_disable[button])
+    {
+        HACKSDL_debug("Button disabled, new value=0");
+        return 0;
+    }
+
+    return button_pressed;
+
+}
+
+SDL_bool SDL_GameControllerHasAxis(SDL_GameController *gamecontroller, SDL_GameControllerAxis axis)
+{
+    SDL_bool has_axis = SDL_FALSE;
+
+    has_axis = SDL_GameControllerHasAxis(gamecontroller, axis);
+
+    HACKSDL_debug("Hook gamecontroller=%s button=%s value=%d", SDL_GameControllerName(gamecontroller), SDL_GameControllerGetStringForAxis(axis), has_axis);
+
+    // Return true if this axis is virtual
+    if ((config.axis_minus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) || (config.axis_plus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID))
+    {
+        HACKSDL_debug("Virtual axis enabled, new value=1");
+    }
+
+    return has_axis;
 
 }

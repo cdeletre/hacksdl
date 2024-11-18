@@ -53,7 +53,7 @@ const char* SDL_CONTROLLER_BUTTON_FULLNAME[] = {
 };
 
 const char* SDL_CONTROLLER_BUTTON_SHORTNAME[] = {
-    "A",                  // 1
+    "A",                  // 0
     "B",
     "X",
     "Y",
@@ -88,16 +88,23 @@ void default_config()
 
     for(int axis=0;axis < SDL_CONTROLLER_AXIS_MAX; axis++)
     {
-        config.modifier_shift[axis] = 0;
-        config.axis_digital[axis] = 0;
+        config.axis_modifier_shift[axis] = 0;
+        config.axis_digital[axis] = SDL_FALSE;
         config.axis_deadzone[axis] = HACKSDL_AXIS_DEFAULT_DEADZONE;
+        config.axis_minus_virtual_map[axis] = SDL_CONTROLLER_BUTTON_INVALID;
+        config.axis_plus_virtual_map[axis] = SDL_CONTROLLER_BUTTON_INVALID;
+        config.axis_virtual_share[axis] = SDL_FALSE;
+    }
 
+    for(int button=SDL_CONTROLLER_BUTTON_A; button<SDL_CONTROLLER_BUTTON_MAX; button++)
+    {
+        config.button_disable[button] = SDL_FALSE;
     }
 
     for(int index=0;index < HACKSDL_DEVICE_INDEX_MAX; index++)
     {
-        config.disable_device[index] = 0;
-        config.index_mapping[index] = index;
+        config.device_disable[index] = 0;
+        config.controller_index_mapping[index] = index;
     }
 }
 
@@ -109,23 +116,53 @@ void print_config()
     HACKSDL_info("---- Configuration BEGIN ----");
     HACKSDL_info("libsdl_name=%s",config.libsdl_name);
     HACKSDL_info("no_gamecontroller=%d",config.no_gamecontroller);
-    HACKSDL_info("modifier_button=%s",sdl_controller_button_name(config.modifier_button));
+    HACKSDL_info("axis_modifier_button=%s",SDL_GameControllerGetStringForButton(config.modifier_button));
     for(int axis=0;axis < SDL_CONTROLLER_AXIS_MAX; axis++)
     {
-        if(config.modifier_shift[axis] > 0)
+        HACKSDL_info("axis.%s", SDL_GameControllerGetStringForAxis(axis));
+
+        HACKSDL_info("    axis_modifier_shift=%d", config.axis_modifier_shift[axis]);
+
+        HACKSDL_info("    axis_digital=%d", config.axis_digital[axis]);
+        HACKSDL_info("    deadzone=%d", config.axis_deadzone[axis]);
+        if (config.axis_minus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID)
         {
-            HACKSDL_info("axis=%s modifier_shift=%d", get_axis_shortname(axis), config.modifier_shift[axis]);
+            HACKSDL_info("    (-) virtual_map=%s", SDL_GameControllerGetStringForButton(config.axis_minus_virtual_map[axis]));
         }
-        HACKSDL_info("axis=%s digital=%d deadzone=%d", get_axis_shortname(axis), config.axis_digital[axis], config.axis_deadzone[axis]);
+        else
+        {
+            HACKSDL_info("    (-) virtual_map=%s", "no");
+        }
+
+        if (config.axis_plus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID)
+        {
+            HACKSDL_info("    (+) virtual_map=%s", SDL_GameControllerGetStringForButton(config.axis_plus_virtual_map[axis]));
+        }
+        else
+        {
+            HACKSDL_info("    (+) virtual_map=%s", "no");
+        }
+
+        HACKSDL_info("    virtual_share=%d", config.axis_virtual_share[axis]);
+
+
     }
 
-    for(int index=0;index < HACKSDL_DEVICE_INDEX_MAX; index++)
+    HACKSDL_info("button_disable");
+    for(int button=SDL_CONTROLLER_BUTTON_A; button<SDL_CONTROLLER_BUTTON_MAX; button++)
     {
-        if(config.index_mapping[index] != index)
-        {
-            HACKSDL_info("index_mapping[%d]=%d",index, config.index_mapping[index]);
-        }
-        HACKSDL_info("disable_device[%d]=%d",index, config.disable_device[index]);
+        HACKSDL_info("    button.%s=%d", SDL_GameControllerGetStringForButton(button), config.button_disable[button]);
+    }
+
+    HACKSDL_info("controller_index_mapping");
+    for(int index=0;index < HACKSDL_DEVICE_INDEX_MAX; index++)
+    {   
+        HACKSDL_info("    device.%d=%d",index, config.controller_index_mapping[index]);
+    }
+    HACKSDL_info("device_disable");
+    for(int index=0;index < HACKSDL_DEVICE_INDEX_MAX; index++)
+    {     
+        HACKSDL_info("    device.%d=%d",index, config.device_disable[index]);
     }
     HACKSDL_info("---- Configuration END ----");
 }
@@ -205,29 +242,53 @@ int load_config_data()
     }
 
     // remap hack (HACKSDL_MAP_INDEX_)
-    read_config_int_map(HACKSDL_HINT_MAP_INDEX_, &config.index_mapping[0], HACKSDL_DEVICE_INDEX_MAX);
+    read_config_int_map_indexes(HACKSDL_HINT_DEVICE_MAP_INDEX_, &config.controller_index_mapping[0], HACKSDL_DEVICE_INDEX_MAX);
 
     // disable device
-    read_config_int_map(HACKSDL_HINT_DISABLE_DEVICE_, &config.disable_device[0], HACKSDL_DEVICE_INDEX_MAX);
+    read_config_int_map_indexes(HACKSDL_HINT_DEVICE_DISABLE_, &config.device_disable[0], HACKSDL_DEVICE_INDEX_MAX);
 
     // no controller hack (HACKSDL_NO_GAMECONTROLLER)
     read_config_int(HACKSDL_HINT_NO_GAMECONTROLLER, &config.no_gamecontroller);
 
-    // modifier hack (HACKSDL_MODIFIER_SHIFT_, HACKSDL_MODIFIER_BUTTON)
-    read_config_int_map_b(HACKSDL_HINT_MODIFIER_SHIFT_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.modifier_shift[0], SDL_CONTROLLER_AXIS_MAX);
+    // modifier hack (HACKSDL_AXIS_MODIFIER_SHIFT_, HACKSDL_AXIS_MODIFIER_BUTTON)
+    read_config_int_map_keys(HACKSDL_HINT_AXIS_MODIFIER_SHIFT_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_modifier_shift[0], SDL_CONTROLLER_AXIS_MAX);
 
-    if(read_config_string(HACKSDL_HINT_MODIFIER_BUTTON, &value))
+    if(read_config_string(HACKSDL_HINT_AXIS_MODIFIER_BUTTON, &value))
     {
-        config.modifier_button = get_gc_button(value);
+        config.modifier_button = SDL_GameControllerGetButtonFromString(value);
     }
     else
     {
-        HACKSDL_debug("HACKSDL_MODIFIER_BUTTON not set");
+        HACKSDL_debug("HACKSDL_AXIS_MODIFIER_BUTTON not set");
     }
 
     // trigger hack (HACKSDL_AXIS_MODE/DEADZONE)
-    read_config_int_map_b(HACKSDL_HINT_AXIS_DIGITAL_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_digital[0], SDL_CONTROLLER_AXIS_MAX);
-    read_config_int_map_b(HACKSDL_HINT_AXIS_DEADZONE_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_deadzone[0], SDL_CONTROLLER_AXIS_MAX);
+    read_config_int_map_keys(HACKSDL_HINT_AXIS_DIGITAL_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_digital[0], SDL_CONTROLLER_AXIS_MAX);
+    read_config_int_map_keys(HACKSDL_HINT_AXIS_DEADZONE_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_deadzone[0], SDL_CONTROLLER_AXIS_MAX);
+
+    // axis virtual hack(HACKSDL_AXIS_MINUS_VIRTUAL_MAP/HACKSDL_AXIS_PLUS_VIRTUAL_MAP/HACKSDL_AXIS_VIRTUAL_SHARE)
+    read_config_button_map_keys(HACKSDL_HINT_AXIS_MINUS_VIRTUAL_MAP_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_minus_virtual_map[0], SDL_CONTROLLER_AXIS_MAX);
+    read_config_button_map_keys(HACKSDL_HINT_AXIS_PLUS_VIRTUAL_MAP_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_plus_virtual_map[0], SDL_CONTROLLER_AXIS_MAX);
+    read_config_int_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_SHARE_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_share[0], SDL_CONTROLLER_AXIS_MAX);
+
+    // disable button if the virtual axis is in not in shared mode
+    int button;
+    for(int axis=0; axis<SDL_CONTROLLER_AXIS_MAX; axis++)
+    {
+        if(config.axis_virtual_share[axis] == SDL_FALSE)
+        {
+            button = config.axis_minus_virtual_map[axis];
+            if((button = config.axis_minus_virtual_map[axis]) != SDL_CONTROLLER_BUTTON_INVALID)
+            {
+                config.button_disable[button] = SDL_TRUE;
+            }
+            else if((button = config.axis_plus_virtual_map[axis]) != SDL_CONTROLLER_BUTTON_INVALID)
+            {
+                config.button_disable[button] = SDL_TRUE;
+            }
+
+        }
+    }
 }
 
 /*
@@ -237,37 +298,55 @@ int load_config_data()
 /*
     read_config_string: read a string for the key entry
 */
-int read_config_string(char* key, const char **value)
+int read_config_string(char* key, const char **str_value)
 {
     if (file_config_present)
     {
-        return read_config_file_string(key, value);
+        return read_config_file_string(key, str_value);
     }
     else
     {
-        return read_config_env_string(key, value);
+        return read_config_env_string(key, str_value);
     }
 }
 
 /*
-    read_config_int: read an int for the key entry
+    read_config_button: read a string and return an SDL button
 */
-int read_config_int(char* key, int *value)
+
+int read_config_button(char* key, int *int_value)
 {
-    if (file_config_present)
+    const char *str_value;
+    if(read_config_string(key,&str_value))
     {
-        return read_config_file_int(key, value);
+        *int_value = SDL_GameControllerGetButtonFromString(str_value);
+        return 1;
     }
     else
     {
-        return read_config_env_int(key, value);
+        *int_value = SDL_CONTROLLER_BUTTON_INVALID;
+        return 0;
+    }
+}
+/*
+    read_config_int: read an int for the key entry
+*/
+int read_config_int(char* key, int *int_value)
+{
+    if (file_config_present)
+    {
+        return read_config_file_int(key, int_value);
+    }
+    else
+    {
+        return read_config_env_int(key, int_value);
     }
 }
 
 /*
     read_config_int_map: read a map of int for the key_prefix entry indexed with numbers
 */
-int read_config_int_map(char* key_prefix, int *value_map, int length)
+int read_config_int_map_indexes(char* key_prefix, int *value_map, int length)
 {
 
     char buffer[64];
@@ -288,7 +367,7 @@ int read_config_int_map(char* key_prefix, int *value_map, int length)
 /*
     read_config_int_map_b: read a map of int for the key_prefix entry indexed with key from the keys list
 */
-int read_config_int_map_b(const char* key_prefix, const char** keys, int *value_map, int length)
+int read_config_int_map_keys(const char* key_prefix, const char** keys, int *value_map, int length)
 {
 
     char buffer[64];
@@ -306,14 +385,30 @@ int read_config_int_map_b(const char* key_prefix, const char** keys, int *value_
 
 }
 
+int read_config_button_map_keys(const char* key_prefix, const char** keys, int *value_map, int length)
+{
+
+    char buffer[64];
+    const char* value;
+    int int_value;
+    for(int index=0; index<length; index++ )
+    {
+        sprintf(buffer,key_prefix,keys[index]);
+        read_config_button(buffer, &value_map[index]);
+    }
+
+    return 1;
+
+}
+
 /*
     config value access functions (file)
 */
-int read_config_file_string(const char* key, const char **value)
+int read_config_file_string(const char* key, const char **str_value)
 {
-    if(config_lookup_string(&cfg, key, value))
+    if(config_lookup_string(&cfg, key, str_value))
     {
-        HACKSDL_debug("%s = %s", key, *value);
+        HACKSDL_debug("%s = %s", key, *str_value);
         return 1;
     }
     else
@@ -323,7 +418,7 @@ int read_config_file_string(const char* key, const char **value)
     }
 }
 
-int read_config_file_int(const char* key, int *value)
+int read_config_file_int(const char* key, int *int_value)
 {
     const char* str_value;
     char *endptr = NULL; 
@@ -356,7 +451,7 @@ int read_config_file_int(const char* key, int *value)
         }
         else if (errno == 0 && str_value)
         {
-            *value = (int)long_value;
+            *int_value = (int)long_value;
             HACKSDL_debug("%s = %d",key, (int)long_value);
             return 1;
         }
@@ -365,19 +460,19 @@ int read_config_file_int(const char* key, int *value)
     {
         HACKSDL_debug("%s not found", key);
     }
-
+    *int_value = 0;
     return 0;
 }
 
 /*
     config value access functions (env)
 */
-int read_config_env_string(const char* key, const char **value){
+int read_config_env_string(const char* key, const char **str_value){
 
-    *value = SDL_GetHint(key);
-    if(*value != NULL)
+    *str_value = SDL_GetHint(key);
+    if(*str_value != NULL)
     {
-        HACKSDL_debug("%s = %s", key, *value);
+        HACKSDL_debug("%s = %s", key, *str_value);
         return 1;
     }
     else
@@ -388,7 +483,7 @@ int read_config_env_string(const char* key, const char **value){
 
 }
 
-int read_config_env_int(const char *key, int *value)
+int read_config_env_int(const char *key, int *int_value)
 {
     const char* str_value = SDL_GetHint(key);
 
@@ -423,7 +518,7 @@ int read_config_env_int(const char *key, int *value)
         }
         else if (errno == 0 && str_value)
         {
-            *value = (int)long_value;
+            *int_value = (int)long_value;
             HACKSDL_debug("%s = %d",key, (int)long_value);
             return 1;
         }
@@ -433,66 +528,6 @@ int read_config_env_int(const char *key, int *value)
     {
         HACKSDL_debug("%s not found", key);
     }
-
+    int_value = 0;
     return 0;
-}
-
-/*
-    get_gc_button: get the SDL_GameControllerButton from the button name (A,B...)
-*/
-SDL_GameControllerButton get_gc_button(const char* modifier_button_str)
-{
-    for(int i=SDL_CONTROLLER_BUTTON_A; i<SDL_CONTROLLER_BUTTON_MAX; i++)
-    {
-        if( strcmp(modifier_button_str, SDL_CONTROLLER_BUTTON_SHORTNAME[i]) == 0)
-        {
-            return i;
-        }
-    }
-    return SDL_CONTROLLER_BUTTON_INVALID;
-}
-
-/*
-    sdl_controller_button_to_string: get the button name (A,B...) from the SDL_GameControllerButton value
-*/
-const char* sdl_controller_button_name(SDL_GameControllerButton button)
-{
-    if(button < SDL_CONTROLLER_BUTTON_A || button > SDL_CONTROLLER_BUTTON_MAX)
-        return "INVALID";
-    return SDL_CONTROLLER_BUTTON_SHORTNAME[button];
-}
-
-/*
-    get_gc_axis: get the SDL_GameControllerAxis from the axis name (LEFTX,LEFTY...)
-*/
-SDL_GameControllerAxis get_gc_axis(const char* axis_str)
-{
-    for(int i=SDL_CONTROLLER_AXIS_LEFTX; i<SDL_CONTROLLER_AXIS_MAX; i++)
-    {
-        if( strcmp(axis_str, SDL_CONTROLLER_AXIS_SHORTNAME[i]) == 0)
-            HACKSDL_debug("AXIS = %s", SDL_CONTROLLER_AXIS_SHORTNAME[i]);
-            return i;
-    }
-    return SDL_CONTROLLER_AXIS_INVALID;
-}
-
-/*
-    get_axis_name: Get the SDL axis name (char*)
-*/
-const char* get_axis_name(SDL_GameControllerAxis axis)
-{
-    if(axis < SDL_CONTROLLER_AXIS_LEFTX || axis > SDL_CONTROLLER_AXIS_MAX)
-        return "SDL_CONTROLLER_AXIS_INVALID";
-    return SDL_CONTROLLER_AXIS_FULLNAME[axis];
-}
-
-/*
-    get_axis_shortname: Get the SDL axis name (char*)
-*/
-const char* get_axis_shortname(SDL_GameControllerAxis axis)
-{
-
-    if(axis < SDL_CONTROLLER_AXIS_LEFTX || axis > SDL_CONTROLLER_AXIS_MAX)
-        return "INVALID";
-    return SDL_CONTROLLER_AXIS_SHORTNAME[axis];
 }

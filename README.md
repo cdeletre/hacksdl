@@ -28,6 +28,7 @@ Additionnal hack are added such as:
 - axis digital mode
 - axis deadzone
 - axis value modifier
+- virtual axis
 
 ## Build requirements
 
@@ -51,8 +52,8 @@ Note: build it for the target arch (aarch64, armhf, ...)
 ```shell
 export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
 export HACKSDL_VERBOSE=2
-export HACKSDL_MAP_INDEX_0=1
-export HACKSDL_MAP_INDEX_1=0
+export HACKSDL_DEVICE_MAP_INDEX_0=1
+export HACKSDL_DEVICE_MAP_INDEX_1=0
 ./some_sdl2_prog
 ```
 
@@ -60,8 +61,8 @@ export HACKSDL_MAP_INDEX_1=0
 
 ```shell
 export LD_PRELOAD="$PWD/hacksdl.aarch64.so"
-export HACKSDL_MODIFIER_BUTTON=X
-export HACKSDL_MODIFIER_SHIFT_LEFTX=2
+export HACKSDL_AXIS_MODIFIER_BUTTON=X
+export HACKSDL_AXIS_MODIFIER_SHIFT_LEFTX=2
 ./some_sdl2_prog
 ```
 
@@ -75,7 +76,7 @@ export HACKSDL_NO_GAMECONTROLLER=1
 **Swap controller 0 and 2, one line command**
 
 ```shell
-LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_MAP_INDEX_0=2 HACKSDL_MAP_INDEX_2=0 ./some_sdl2_prog
+LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DEVICE_MAP_INDEX_0=2 HACKSDL_DEVICE_MAP_INDEX_2=0 ./some_sdl2_prog
 ```
 
 **Disable (mode 1) controller with index 0, one line command**
@@ -104,6 +105,8 @@ export HACKSDL_CONFIG_FILE="$PWD/hacksdl.conf"
 ```
 
 - hacksdl.conf (example)
+
+Left axis deadzone set to 2048 and modifier on button X
 ```conf
 HACKSDL_VERBOSE="1";
 HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
@@ -111,7 +114,19 @@ HACKSDL_AXIS_DEADZONE_LEFTX="2048";
 HACKSDL_AXIS_DEADZONE_LEFTX="2048";
 HACKSDL_AXIS_DIGITAL_LEFTX="1";
 HACKSDL_AXIS_DIGITAL_LEFTY="1";
-HACKSDL_MODIFIER_BUTTON="X";
-HACKSDL_MODIFIER_SHIFT_LEFTX="2";
-HACKSDL_MODIFIER_SHIFT_LEFTY="2";
+HACKSDL_AXIS_MODIFIER_BUTTON="X";
+HACKSDL_AXIS_MODIFIER_SHIFT_LEFTX="2";
+HACKSDL_AXIS_MODIFIER_SHIFT_LEFTY="2";
+```
+
+Virtual left axis using DPAD input with modifier on button X
+```conf
+HACKSDL_VERBOSE="1";
+HACKSDL_AXIS_MODIFIER_BUTTON="X";
+HACKSDL_AXIS_MODIFIER_SHIFT_LEFTX="2";
+HACKSDL_AXIS_MODIFIER_SHIFT_LEFTY="2";
+HACKSDL_AXIS_MINUS_VIRTUAL_MAP_LEFTX="DPLEFT";
+HACKSDL_AXIS_PLUS_VIRTUAL_MAP_LEFTX="DPRIGHT";
+HACKSDL_AXIS_MINUS_VIRTUAL_MAP_LEFTY="DPUP";
+HACKSDL_AXIS_PLUS_VIRTUAL_MAP_LEFTY="DPDOWN";
 ```
