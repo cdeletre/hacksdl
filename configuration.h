@@ -20,11 +20,11 @@
 #define HACKSDL_HINT_AXIS_MODIFIER_SHIFT_       "HACKSDL_AXIS_MODIFIER_SHIFT_%s"
 #define HACKSDL_HINT_AXIS_DIGITAL_              "HACKSDL_AXIS_DIGITAL_%s"
 #define HACKSDL_HINT_AXIS_DEADZONE_             "HACKSDL_AXIS_DEADZONE_%s"
-#define HACKSDL_HINT_AXIS_MINUS_VIRTUAL_MAP_    "HACKSDL_AXIS_MINUS_VIRTUAL_MAP_%s"
-#define HACKSDL_HINT_AXIS_PLUS_VIRTUAL_MAP_     "HACKSDL_AXIS_PLUS_VIRTUAL_MAP_%s"
+#define HACKSDL_HINT_AXIS_VIRTUAL_MINUS_MAP_    "HACKSDL_AXIS_VIRTUAL_MINUS_MAP_%s"
+#define HACKSDL_HINT_AXIS_VIRTUAL_PLUS_MAP_     "HACKSDL_AXIS_VIRTUAL_PLUS_MAP_%s"
 #define HACKSDL_HINT_AXIS_VIRTUAL_SHARE_        "HACKSDL_AXIS_VIRTUAL_SHARE_%s"
-#define HACKSDL_HINT_DPAD_X_VIRTUAL_MAP         "HACKSDL_DPAD_X_VIRTUAL_MAP"
-#define HACKSDL_HINT_DPAD_Y_VIRTUAL_MAP         "HACKSDL_DPAD_Y_VIRTUAL_MAP"
+#define HACKSDL_HINT_DPAD_VIRTUAL_X_MAP         "HACKSDL_DPAD_VIRTUAL_X_MAP"
+#define HACKSDL_HINT_DPAD_VIRTUAL_Y_MAP         "HACKSDL_DPAD_VIRTUAL_Y_MAP"
 #define HACKSDL_HINT_DPAD_VIRTUAL_SHARE         "HACKSDL_DPAD_VIRTUAL_SHARE"
 
 struct hacksdl_config{
@@ -37,8 +37,8 @@ struct hacksdl_config{
     int controller_index_mapping[HACKSDL_DEVICE_INDEX_MAX];
     int axis_digital[SDL_CONTROLLER_AXIS_MAX];              // SDL_TRUE / SDL_FALSE
     int axis_deadzone[SDL_CONTROLLER_AXIS_MAX];
-    int axis_minus_virtual_map[SDL_CONTROLLER_AXIS_MAX];
-    int axis_plus_virtual_map[SDL_CONTROLLER_AXIS_MAX];
+    int axis_virtual_minus_map[SDL_CONTROLLER_AXIS_MAX];
+    int axis_virtual_plus_map[SDL_CONTROLLER_AXIS_MAX];
     int axis_virtual_share[SDL_CONTROLLER_AXIS_MAX];
     int button_disable[SDL_BUTTON_COUNT];                   // SDL_TRUE / SDL_FALSE
     int dpad_x_virtual_map;                                 //TODO

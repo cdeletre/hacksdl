@@ -91,8 +91,8 @@ void default_config()
         config.axis_modifier_shift[axis] = 0;
         config.axis_digital[axis] = SDL_FALSE;
         config.axis_deadzone[axis] = HACKSDL_AXIS_DEFAULT_DEADZONE;
-        config.axis_minus_virtual_map[axis] = SDL_CONTROLLER_BUTTON_INVALID;
-        config.axis_plus_virtual_map[axis] = SDL_CONTROLLER_BUTTON_INVALID;
+        config.axis_virtual_minus_map[axis] = SDL_CONTROLLER_BUTTON_INVALID;
+        config.axis_virtual_plus_map[axis] = SDL_CONTROLLER_BUTTON_INVALID;
         config.axis_virtual_share[axis] = SDL_FALSE;
     }
 
@@ -125,18 +125,18 @@ void print_config()
 
         HACKSDL_info("    axis_digital=%d", config.axis_digital[axis]);
         HACKSDL_info("    deadzone=%d", config.axis_deadzone[axis]);
-        if (config.axis_minus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID)
+        if (config.axis_virtual_minus_map[axis] != SDL_CONTROLLER_BUTTON_INVALID)
         {
-            HACKSDL_info("    (-) virtual_map=%s", SDL_GameControllerGetStringForButton(config.axis_minus_virtual_map[axis]));
+            HACKSDL_info("    (-) virtual_map=%s", SDL_GameControllerGetStringForButton(config.axis_virtual_minus_map[axis]));
         }
         else
         {
             HACKSDL_info("    (-) virtual_map=%s", "no");
         }
 
-        if (config.axis_plus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID)
+        if (config.axis_virtual_plus_map[axis] != SDL_CONTROLLER_BUTTON_INVALID)
         {
-            HACKSDL_info("    (+) virtual_map=%s", SDL_GameControllerGetStringForButton(config.axis_plus_virtual_map[axis]));
+            HACKSDL_info("    (+) virtual_map=%s", SDL_GameControllerGetStringForButton(config.axis_virtual_plus_map[axis]));
         }
         else
         {
@@ -266,9 +266,9 @@ int load_config_data()
     read_config_int_map_keys(HACKSDL_HINT_AXIS_DIGITAL_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_digital[0], SDL_CONTROLLER_AXIS_MAX);
     read_config_int_map_keys(HACKSDL_HINT_AXIS_DEADZONE_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_deadzone[0], SDL_CONTROLLER_AXIS_MAX);
 
-    // axis virtual hack(HACKSDL_AXIS_MINUS_VIRTUAL_MAP/HACKSDL_AXIS_PLUS_VIRTUAL_MAP/HACKSDL_AXIS_VIRTUAL_SHARE)
-    read_config_button_map_keys(HACKSDL_HINT_AXIS_MINUS_VIRTUAL_MAP_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_minus_virtual_map[0], SDL_CONTROLLER_AXIS_MAX);
-    read_config_button_map_keys(HACKSDL_HINT_AXIS_PLUS_VIRTUAL_MAP_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_plus_virtual_map[0], SDL_CONTROLLER_AXIS_MAX);
+    // axis virtual hack(HACKSDL_AXIS_VIRTUAL_MINUS_MAP/HACKSDL_AXIS_VIRTUAL_PLUS_MAP/HACKSDL_AXIS_VIRTUAL_SHARE)
+    read_config_button_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_MINUS_MAP_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_minus_map[0], SDL_CONTROLLER_AXIS_MAX);
+    read_config_button_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_PLUS_MAP_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_plus_map[0], SDL_CONTROLLER_AXIS_MAX);
     read_config_int_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_SHARE_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_share[0], SDL_CONTROLLER_AXIS_MAX);
 
     // disable button if the virtual axis is in not in shared mode
@@ -277,12 +277,12 @@ int load_config_data()
     {
         if(config.axis_virtual_share[axis] == SDL_FALSE)
         {
-            button = config.axis_minus_virtual_map[axis];
-            if((button = config.axis_minus_virtual_map[axis]) != SDL_CONTROLLER_BUTTON_INVALID)
+            button = config.axis_virtual_minus_map[axis];
+            if((button = config.axis_virtual_minus_map[axis]) != SDL_CONTROLLER_BUTTON_INVALID)
             {
                 config.button_disable[button] = SDL_TRUE;
             }
-            else if((button = config.axis_plus_virtual_map[axis]) != SDL_CONTROLLER_BUTTON_INVALID)
+            else if((button = config.axis_virtual_plus_map[axis]) != SDL_CONTROLLER_BUTTON_INVALID)
             {
                 config.button_disable[button] = SDL_TRUE;
             }
