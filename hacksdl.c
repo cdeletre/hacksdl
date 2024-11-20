@@ -369,10 +369,10 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
 
     HACKSDL_debug("Hook gamecontroller=%s axis=%s value=%d", SDL_GameControllerName(gamecontroller), SDL_GameControllerGetStringForAxis(axis), axis_value);
 
-    if ( (config.axis_minus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) || (config.axis_plus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) )
+    if ( (config.axis_virtual_minus_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) || (config.axis_virtual_plus_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) )
     {
-        axis_minus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_minus_virtual_map[axis]);
-        axis_plus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_plus_virtual_map[axis]);
+        axis_minus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_virtual_minus_map[axis]);
+        axis_plus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_virtual_plus_map[axis]);
         
         if(axis_minus_virtual_button_value && (! axis_plus_virtual_button_value))
         {
@@ -385,7 +385,6 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
         }
         HACKSDL_debug("Virtual axis enabled, new value=%d", axis_value);
     }
-
 
     if(config.axis_modifier_shift[axis] != 0)
     {
@@ -453,7 +452,7 @@ SDL_bool SDL_GameControllerHasAxis(SDL_GameController *gamecontroller, SDL_GameC
     HACKSDL_debug("Hook gamecontroller=%s button=%s value=%d", SDL_GameControllerName(gamecontroller), SDL_GameControllerGetStringForAxis(axis), has_axis);
 
     // Return true if this axis is virtual
-    if ((config.axis_minus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) || (config.axis_plus_virtual_map[axis] != SDL_CONTROLLER_BUTTON_INVALID))
+    if ((config.axis_virtual_minus_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) || (config.axis_virtual_plus_map[axis] != SDL_CONTROLLER_BUTTON_INVALID))
     {
         HACKSDL_debug("Virtual axis enabled, new value=1");
     }
