@@ -27,6 +27,15 @@
 #define HACKSDL_HINT_DPAD_VIRTUAL_Y_MAP         "HACKSDL_DPAD_VIRTUAL_Y_MAP"
 #define HACKSDL_HINT_DPAD_VIRTUAL_SHARE         "HACKSDL_DPAD_VIRTUAL_SHARE"
 
+#define HACKSDL_HINT_GET_DISPLAY_MODE_W         "HACKSDL_GET_DISPLAY_MODE_W"
+#define HACKSDL_HINT_GET_DISPLAY_MODE_H         "HACKSDL_GET_DISPLAY_MODE_H"
+#define HACKSDL_HINT_SET_DISPLAY_MODE_W         "HACKSDL_SET_DISPLAY_MODE_W"
+#define HACKSDL_HINT_SET_DISPLAY_MODE_H         "HACKSDL_SET_DISPLAY_MODE_H"
+#define HACKSDL_HINT_GET_WINDOW_SIZE_W          "HACKSDL_GET_WINDOW_SIZE_W"
+#define HACKSDL_HINT_GET_WINDOW_SIZE_H          "HACKSDL_GET_WINDOW_SIZE_H"
+#define HACKSDL_HINT_SET_WINDOW_SIZE_W          "HACKSDL_SET_WINDOW_SIZE_W"
+#define HACKSDL_HINT_SET_WINDOW_SIZE_H          "HACKSDL_SET_WINDOW_SIZE_H"
+
 struct hacksdl_config{
     int verbose;                                            // 0: none, 1: info, 2: debug
     char libsdl_name[HACKSDL_LIBSDL_NAME_LMAX];
@@ -45,6 +54,14 @@ struct hacksdl_config{
     int dpad_y_virtual_map;                                 //TODO
     int dpad_virtual_share;                                 //TODO
     int axis_disable[SDL_CONTROLLER_AXIS_MAX];              //TODO
+    int get_display_mode_w;
+    int get_display_mode_h;
+    int set_display_mode_w;
+    int set_display_mode_h;
+    int get_window_size_w;
+    int get_window_size_h;
+    int set_window_size_w;
+    int set_window_size_h;
 };
 
 typedef struct hacksdl_config hacksdl_config_t;

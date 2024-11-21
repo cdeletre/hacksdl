@@ -29,6 +29,7 @@ Additionnal hack are added such as:
 - axis deadzone
 - axis value modifier
 - virtual axis
+- display and windows size get/set
 
 ## Build requirements
 
@@ -82,7 +83,7 @@ LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DEVICE_MAP_INDEX_0=2 HACKSDL_DEVICE
 **Disable (mode 1) controller with index 0, one line command**
 
 ```shell
-LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DISABLE_DEVICE_0=1 ./some_sdl2_prog
+LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DEVICE_DISABLE_0=1 ./some_sdl2_prog
 ```
 
 *mode 1 forces SDL_IsGameController to return False for a disable device*
@@ -90,7 +91,7 @@ LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DISABLE_DEVICE_0=1 ./some_sdl2_prog
 **Disable (mode 2) controller with index 0, one line command**
 
 ```shell
-LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DISABLE_DEVICE_0=2 ./some_sdl2_prog
+LD_PRELOAD="$PWD/hacksdl.aarch64.so" HACKSDL_DEVICE_DISABLE_0=2 ./some_sdl2_prog
 ```
 
 *mode 2 does the same as mode 1 but also forces SDL_GameControllerOpen to return NULL for a disable device*
