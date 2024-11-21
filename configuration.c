@@ -106,6 +106,15 @@ void default_config()
         config.device_disable[index] = 0;
         config.controller_index_mapping[index] = index;
     }
+
+    config.get_display_mode_w = 0;
+    config.get_display_mode_h = 0;
+    config.set_display_mode_w = 0;
+    config.set_display_mode_h = 0;
+    config.get_window_size_w = 0;
+    config.get_window_size_h = 0;
+    config.set_window_size_w = 0;
+    config.set_window_size_h = 0;
 }
 
 /*
@@ -164,6 +173,17 @@ void print_config()
     {     
         HACKSDL_info("    device.%d=%d",index, config.device_disable[index]);
     }
+
+    HACKSDL_info("video");
+    HACKSDL_info("    get_display_mode_w=%d",config.get_display_mode_w);
+    HACKSDL_info("    get_display_mode_h=%d",config.get_display_mode_h);
+    HACKSDL_info("    set_display_mode_w=%d",config.set_display_mode_w);
+    HACKSDL_info("    set_display_mode_h=%d",config.set_display_mode_h);
+    HACKSDL_info("    get_window_size_w=%d",config.get_window_size_w);
+    HACKSDL_info("    get_window_size_h=%d",config.get_window_size_h);
+    HACKSDL_info("    set_window_size_w=%d",config.set_window_size_w);
+    HACKSDL_info("    set_window_size_h=%d",config.set_window_size_h);
+
     HACKSDL_info("---- Configuration END ----");
 }
 
@@ -289,6 +309,16 @@ int load_config_data()
 
         }
     }
+
+    read_config_int(HACKSDL_HINT_GET_DISPLAY_MODE_W, &config.get_display_mode_w);
+    read_config_int(HACKSDL_HINT_GET_DISPLAY_MODE_H, &config.get_display_mode_h);
+    read_config_int(HACKSDL_HINT_SET_DISPLAY_MODE_W, &config.set_display_mode_w);
+    read_config_int(HACKSDL_HINT_SET_DISPLAY_MODE_H, &config.set_display_mode_h);
+    read_config_int(HACKSDL_HINT_GET_WINDOW_SIZE_W, &config.get_window_size_w);
+    read_config_int(HACKSDL_HINT_GET_WINDOW_SIZE_H, &config.get_window_size_h);
+    read_config_int(HACKSDL_HINT_SET_WINDOW_SIZE_W, &config.set_window_size_w);
+    read_config_int(HACKSDL_HINT_SET_WINDOW_SIZE_H, &config.set_window_size_h);
+
 }
 
 /*

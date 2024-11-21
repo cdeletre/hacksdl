@@ -40,6 +40,14 @@ Sint16 (*original_SDL_GameControllerGetAxis)(SDL_GameController *gamecontroller,
 Uint8 (*original_SDL_GameControllerGetButton)(SDL_GameController *gamecontroller, SDL_GameControllerButton button);
 SDL_bool (*original_SDL_GameControllerHasAxis)(SDL_GameController *gamecontroller, SDL_GameControllerAxis axis);
 
+// Display functions
+int (*original_SDL_GetCurrentDisplayMode)(int displayIndex, SDL_DisplayMode * mode);
+int (*original_SDL_SetWindowDisplayMode)(SDL_Window * window, const SDL_DisplayMode * mode);
+void (*original_SDL_GetWindowSize)(SDL_Window * window, int *w, int *h);
+void (*original_SDL_SetWindowSize)(SDL_Window * window, int w, int h);
+void (*original_SDL_SetWindowPosition)(SDL_Window * window, int x, int y);
+SDL_DisplayMode* (*original_SDL_GetClosestDisplayMode)(int displayIndex, const SDL_DisplayMode * mode, SDL_DisplayMode * closest);
+
 /*
     Dynamic Library open for original SDL functions
 */
@@ -74,8 +82,14 @@ int setup_original_SDL_functions(){
     original_SDL_GameControllerGetAxis = dlsym(sdl_handler, "SDL_GameControllerGetAxis");
     original_SDL_GameControllerGetButton = dlsym(sdl_handler, "SDL_GameControllerGetButton");
     original_SDL_GameControllerHasAxis = dlsym(sdl_handler, "SDL_GameControllerHasAxis");
-}
 
+    original_SDL_GetCurrentDisplayMode = dlsym(sdl_handler, "SDL_GetCurrentDisplayMode");
+    original_SDL_SetWindowDisplayMode = dlsym(sdl_handler, "SDL_SetWindowDisplayMode");
+    original_SDL_GetWindowSize = dlsym(sdl_handler, "SDL_GetWindowSize");
+    original_SDL_SetWindowSize = dlsym(sdl_handler, "SDL_SetWindowSize");
+    original_SDL_SetWindowPosition = dlsym(sdl_handler, "SDL_SetWindowPosition");
+    original_SDL_GetClosestDisplayMode = dlsym(sdl_handler, "SDL_GetClosestDisplayMode");
+}
 
 /*
     initialize: setup the hack
@@ -459,4 +473,102 @@ SDL_bool SDL_GameControllerHasAxis(SDL_GameController *gamecontroller, SDL_GameC
 
     return has_axis;
 
+}
+
+int SDL_GetCurrentDisplayMode(int displayIndex, SDL_DisplayMode * mode)
+{
+    int result = 0;
+    result = original_SDL_GetCurrentDisplayMode(displayIndex, mode);
+    HACKSDL_debug("result=%d", result);
+    if(result == 0)
+    {
+        HACKSDL_debug("mode.w=%d mode.h=%d", mode->w,mode->h);
+    }
+
+    if (config.get_display_mode_w != 0)
+    {
+        mode->w = config.get_display_mode_w;
+        HACKSDL_debug("new value mode.w=%d", mode->w);
+    }
+
+    if (config.get_display_mode_h != 0)
+    {
+        mode->h = config.get_display_mode_h;
+        HACKSDL_debug("new value mode.h=%d", mode->h);
+    }
+
+    return result;
+
+}
+
+int SDL_SetWindowDisplayMode(SDL_Window * window, const SDL_DisplayMode * mode)
+{
+    HACKSDL_debug("mode.w=%d mode.h=%d", mode->w, mode->h);
+
+    SDL_DisplayMode * new_mode;
+    memcpy((void*)mode, (void*)new_mode, sizeof(SDL_DisplayMode)); // UNTESTED !
+
+
+    if (config.set_display_mode_w != 0)
+    {
+        new_mode->w = config.set_display_mode_w;
+        HACKSDL_debug("new value mode.w=%d", new_mode->w);
+    }
+
+    if (config.set_display_mode_h != 0)
+    {
+        new_mode->h = config.set_display_mode_h;
+        HACKSDL_debug("new value mode.h=%d", new_mode->h);
+    }
+    
+    original_SDL_SetWindowDisplayMode(window, new_mode);
+}
+
+void SDL_GetWindowSize(SDL_Window * window, int *w, int *h)
+{
+    original_SDL_GetWindowSize(window, w, h);
+    HACKSDL_debug("w=%d h=%d", *w, *h);
+    if (config.get_window_size_w != 0)
+    {
+        *w = config.get_window_size_w;
+        HACKSDL_debug("new value w=%d" , *w);
+    }
+    if (config.get_window_size_h != 0)
+    {
+        *h = config.get_window_size_h;
+        HACKSDL_debug("new value w=%d" , *h);
+    }
+}
+
+void SDL_SetWindowSize(SDL_Window * window, int w, int h)
+{
+    HACKSDL_debug("w=%d h=%d", w, h);
+
+    if (config.set_window_size_w != 0)
+    {
+        w = config.set_window_size_w;
+        HACKSDL_debug("new value w=%d", w);
+    }
+
+    if (config.set_window_size_h != 0)
+    {
+        h = config.set_window_size_h;
+        HACKSDL_debug("new value h=%d", h);
+    }
+
+    original_SDL_SetWindowSize(window, w, h);
+}
+
+SDL_DisplayMode * SDL_GetClosestDisplayMode(int displayIndex, const SDL_DisplayMode * mode, SDL_DisplayMode * closest)
+{
+    SDL_DisplayMode * result;
+    result = original_SDL_GetClosestDisplayMode(displayIndex, mode, closest);
+
+        HACKSDL_debug("mode.w=%d mode.h=%d closest.w=%d closest.h=%d", mode->w, mode->h, closest->w, closest->h);
+        if (result != NULL)
+        {
+            HACKSDL_debug("result.w=%d result.h=%d closest.w=%d closest.h=%d", result->w, result->h);
+        }
+
+    return result;
 }

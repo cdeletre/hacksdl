@@ -29,6 +29,7 @@ Additionnal hack are added such as:
 - axis deadzone
 - axis value modifier
 - virtual axis
+- display and windows size get/set
 
 ## Build requirements
 
