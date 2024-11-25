@@ -390,13 +390,17 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
         
         if(axis_minus_virtual_button_value && (! axis_plus_virtual_button_value))
         {
-            axis_value = SDL_AXIS_MIN;
-        }else if((! axis_minus_virtual_button_value) && axis_plus_virtual_button_value)
+            axis_value = config.axis_virtual_min[axis];
+        }
+        else if((! axis_minus_virtual_button_value) && axis_plus_virtual_button_value)
         {
-            axis_value = SDL_AXIS_MAX;
-        }else{
+            axis_value = config.axis_virtual_max[axis];
+        }
+        else if(config.axis_virtual_merge[axis] == 0)
+        {
             axis_value = 0;
         }
+
         HACKSDL_debug("Virtual axis enabled, new value=%d", axis_value);
     }
 
