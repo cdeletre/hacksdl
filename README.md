@@ -134,7 +134,7 @@ HACKSDL_AXIS_VIRTUAL_MERGE_LEFTX="0";
 HACKSDL_AXIS_VIRTUAL_MERGE_LEFTY="0";
 ```
 
-Virtual left axis using DPAD input with modifier on button X, merge is enabled by default (if a real left axis exists it can be used as well). Virtual DPAD range is reduced to 0-8192.
+Virtual left axis using DPAD input with modifier on button X, merge is enabled by default (if a real left axis exists it can be used as well). Virtual axis range is reduced to -8192 +8192.
 ```conf
 HACKSDL_VERBOSE="1";
 HACKSDL_AXIS_MODIFIER_BUTTON="X";
@@ -144,6 +144,8 @@ HACKSDL_AXIS_VIRTUAL_MINUS_MAP_LEFTX="DPLEFT";
 HACKSDL_AXIS_VIRTUAL_PLUS_MAP_LEFTX="DPRIGHT";
 HACKSDL_AXIS_VIRTUAL_MINUS_MAP_LEFTY="DPUP";
 HACKSDL_AXIS_VIRTUAL_PLUS_MAP_LEFTY="DPDOWN";
+HACKSDL_AXIS_VIRTUAL_MIN_LEFTX="-8192";
+HACKSDL_AXIS_VIRTUAL_MIN_LEFTY="-8192";
 HACKSDL_AXIS_VIRTUAL_MAX_LEFTX="8192";
 HACKSDL_AXIS_VIRTUAL_MAX_LEFTY="8192";
 ```
