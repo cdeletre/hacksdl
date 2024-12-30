@@ -93,6 +93,7 @@ void default_config()
         config.axis_deadzone[axis] = HACKSDL_AXIS_DEFAULT_DEADZONE;
         config.axis_virtual_minus_map[axis] = SDL_CONTROLLER_BUTTON_INVALID;
         config.axis_virtual_plus_map[axis] = SDL_CONTROLLER_BUTTON_INVALID;
+        config.axis_virtual_hotkey[axis] = SDL_CONTROLLER_BUTTON_INVALID;
         config.axis_virtual_min[axis] = SDL_AXIS_MIN;
         config.axis_virtual_max[axis] = SDL_AXIS_MAX;
         config.axis_virtual_share[axis] = SDL_FALSE;
@@ -102,6 +103,7 @@ void default_config()
     for(int button=SDL_CONTROLLER_BUTTON_A; button<SDL_CONTROLLER_BUTTON_MAX; button++)
     {
         config.button_disable[button] = SDL_FALSE;
+        config.button_disable_key[button] = SDL_CONTROLLER_BUTTON_INVALID;
     }
 
     for(int index=0;index < HACKSDL_DEVICE_INDEX_MAX; index++)
@@ -157,7 +159,8 @@ void print_config()
         {
             HACKSDL_info("    (+) virtual_map=%s", "no");
         }
-
+        
+        HACKSDL_info("    virtual_hotkey=%s", SDL_GameControllerGetStringForButton(config.axis_virtual_hotkey[axis]));
         HACKSDL_info("    virtual_share=%d", config.axis_virtual_share[axis]);
         HACKSDL_info("    virtual_merge=%d", config.axis_virtual_merge[axis]);
 
@@ -168,6 +171,12 @@ void print_config()
     for(int button=SDL_CONTROLLER_BUTTON_A; button<SDL_CONTROLLER_BUTTON_MAX; button++)
     {
         HACKSDL_info("    button.%s=%d", SDL_GameControllerGetStringForButton(button), config.button_disable[button]);
+    }
+
+    HACKSDL_info("button_disable_key");
+    for(int button=SDL_CONTROLLER_BUTTON_A; button<SDL_CONTROLLER_BUTTON_MAX; button++)
+    {
+        HACKSDL_info("    button.%s=%s", SDL_GameControllerGetStringForButton(button), SDL_GameControllerGetStringForButton(config.button_disable_key[button]));
     }
 
     HACKSDL_info("controller_index_mapping");
@@ -296,6 +305,7 @@ int load_config_data()
     // axis virtual hack(HACKSDL_AXIS_VIRTUAL_MINUS_MAP/HACKSDL_AXIS_VIRTUAL_PLUS_MAP/HACKSDL_AXIS_VIRTUAL_SHARE)
     read_config_button_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_MINUS_MAP_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_minus_map[0], SDL_CONTROLLER_AXIS_MAX);
     read_config_button_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_PLUS_MAP_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_plus_map[0], SDL_CONTROLLER_AXIS_MAX);
+    read_config_button_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_HOTKEY_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_hotkey[0], SDL_CONTROLLER_AXIS_MAX);
     read_config_int_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_MIN_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_min[0], SDL_CONTROLLER_AXIS_MAX);
     read_config_int_map_keys(HACKSDL_HINT_AXIS_VIRTUAL_MAX_, SDL_CONTROLLER_AXIS_SHORTNAME, &config.axis_virtual_max[0], SDL_CONTROLLER_AXIS_MAX);
     for(int axis=0; axis <SDL_CONTROLLER_AXIS_MAX; axis++)
@@ -339,6 +349,8 @@ int load_config_data()
 
         }
     }
+
+    read_config_button_map_keys(HACKSDL_HINT_BUTTON_DISABLE_KEY_, SDL_CONTROLLER_BUTTON_SHORTNAME, &config.button_disable_key[0], SDL_CONTROLLER_BUTTON_MAX);
 
     read_config_int(HACKSDL_HINT_GET_DISPLAY_MODE_W, &config.get_display_mode_w);
     read_config_int(HACKSDL_HINT_GET_DISPLAY_MODE_H, &config.get_display_mode_h);

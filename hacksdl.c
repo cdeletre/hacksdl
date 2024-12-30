@@ -385,23 +385,26 @@ Sint16 SDL_GameControllerGetAxis(SDL_GameController *gamecontroller, SDL_GameCon
 
     if ( (config.axis_virtual_minus_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) || (config.axis_virtual_plus_map[axis] != SDL_CONTROLLER_BUTTON_INVALID) )
     {
-        axis_minus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_virtual_minus_map[axis]);
-        axis_plus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_virtual_plus_map[axis]);
-        
-        if(axis_minus_virtual_button_value && (! axis_plus_virtual_button_value))
+        if ( (original_SDL_GameControllerGetButton(gamecontroller,config.axis_virtual_hotkey[axis])) || (config.axis_virtual_hotkey[axis] == SDL_CONTROLLER_BUTTON_INVALID))
         {
-            axis_value = config.axis_virtual_min[axis];
-        }
-        else if((! axis_minus_virtual_button_value) && axis_plus_virtual_button_value)
-        {
-            axis_value = config.axis_virtual_max[axis];
-        }
-        else if(config.axis_virtual_merge[axis] == 0)
-        {
-            axis_value = 0;
-        }
+            axis_minus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_virtual_minus_map[axis]);
+            axis_plus_virtual_button_value = original_SDL_GameControllerGetButton(gamecontroller, config.axis_virtual_plus_map[axis]);
+            
+            if(axis_minus_virtual_button_value && (! axis_plus_virtual_button_value))
+            {
+                axis_value = config.axis_virtual_min[axis];
+            }
+            else if((! axis_minus_virtual_button_value) && axis_plus_virtual_button_value)
+            {
+                axis_value = config.axis_virtual_max[axis];
+            }
+            else if(config.axis_virtual_merge[axis] == 0)
+            {
+                axis_value = 0;
+            }
 
-        HACKSDL_debug("Virtual axis enabled, new value=%d", axis_value);
+            HACKSDL_debug("Virtual axis enabled, new value=%d", axis_value);
+        }
     }
 
     if(config.axis_modifier_shift[axis] != 0)
@@ -454,6 +457,9 @@ Uint8 SDL_GameControllerGetButton(SDL_GameController *gamecontroller, SDL_GameCo
     if(config.button_disable[button])
     {
         HACKSDL_debug("Button disabled, new value=0");
+        return 0;
+    }else if (original_SDL_GameControllerGetButton(gamecontroller,config.button_disable_key[button]) && (config.button_disable_key[button] != SDL_CONTROLLER_BUTTON_INVALID))
+    {
         return 0;
     }
 

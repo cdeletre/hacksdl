@@ -27,10 +27,13 @@
 #define HACKSDL_HINT_AXIS_DEADZONE_             "HACKSDL_AXIS_DEADZONE_%s"
 #define HACKSDL_HINT_AXIS_VIRTUAL_MINUS_MAP_    "HACKSDL_AXIS_VIRTUAL_MINUS_MAP_%s"
 #define HACKSDL_HINT_AXIS_VIRTUAL_PLUS_MAP_     "HACKSDL_AXIS_VIRTUAL_PLUS_MAP_%s"
+#define HACKSDL_HINT_AXIS_VIRTUAL_HOTKEY_       "HACKSDL_AXIS_VIRTUAL_HOTKEY_%s"
 #define HACKSDL_HINT_AXIS_VIRTUAL_MAX_          "HACKSDL_AXIS_VIRTUAL_MAX_%s"
 #define HACKSDL_HINT_AXIS_VIRTUAL_MIN_          "HACKSDL_AXIS_VIRTUAL_MIN_%s"
 #define HACKSDL_HINT_AXIS_VIRTUAL_SHARE_        "HACKSDL_AXIS_VIRTUAL_SHARE_%s"
 #define HACKSDL_HINT_AXIS_VIRTUAL_MERGE_        "HACKSDL_AXIS_VIRTUAL_MERGE_%s"
+
+#define HACKSDL_HINT_BUTTON_DISABLE_KEY_        "HACKSDL_BUTTON_DISABLE_KEY_%s"
 
 // dpad
 #define HACKSDL_HINT_DPAD_VIRTUAL_X_MAP         "HACKSDL_DPAD_VIRTUAL_X_MAP"
@@ -59,11 +62,13 @@ struct hacksdl_config{
     int axis_deadzone[SDL_CONTROLLER_AXIS_MAX];
     int axis_virtual_minus_map[SDL_CONTROLLER_AXIS_MAX];
     int axis_virtual_plus_map[SDL_CONTROLLER_AXIS_MAX];
+    SDL_GameControllerButton axis_virtual_hotkey[SDL_CONTROLLER_AXIS_MAX];
     int axis_virtual_min[SDL_CONTROLLER_AXIS_MAX];          // SDL_AXIS_MIN - 0
     int axis_virtual_max[SDL_CONTROLLER_AXIS_MAX];          // 0 - SDL_AXIS_MAX
     int axis_virtual_share[SDL_CONTROLLER_AXIS_MAX];        // SDL_TRUE / SDL_FALSE
     int axis_virtual_merge[SDL_CONTROLLER_AXIS_MAX];        // SDL_TRUE / SDL_FALSE
     int button_disable[SDL_BUTTON_COUNT];                   // SDL_TRUE / SDL_FALSE
+    SDL_GameControllerButton button_disable_key[SDL_BUTTON_COUNT];
     int dpad_x_virtual_map;                                 //TODO
     int dpad_y_virtual_map;                                 //TODO
     int dpad_virtual_share;                                 //TODO
